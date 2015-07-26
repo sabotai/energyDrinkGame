@@ -5155,6 +5155,7 @@ amdclean['shapeattributes'] = function (require, core, constants) {
   };
   p5.prototype.smooth = function () {
     this.drawingContext.mozImageSmoothingEnabled = true;
+    this.drawingContext.imageSmoothingEnabled = true;
     this.drawingContext.webkitImageSmoothingEnabled = true;
     return this;
   };
