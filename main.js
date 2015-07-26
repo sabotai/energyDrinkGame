@@ -20,6 +20,11 @@ function preload(){
 	energyDrinkImg = loadImage('assets/energyDrink1.png');
 	compImg = loadImage('assets/laptop.png');
 	faceImg = loadImage('assets/face.png');
+	faceImg = loadImage('assets/figureTired.png');
+	faceImg = loadImage('assets/figureTired2.png');
+	faceImg = loadImage('assets/figureTired3.png');
+	faceImg = loadImage('assets/figureTired4.png');
+	faceImg = loadImage('assets/figureTired5.png');
 }
 
 function setup() {
@@ -46,9 +51,11 @@ function setup() {
   compSprite.scale =(0.9);
 
 
+
   figureSprite = createSprite(mouseX, mouseY);
+  var figureAnimation = figureSprite.addAnimation("basic", "assets/figureTired3.png",  "assets/figureTired4.png",  "assets/figureTired5.png");
   figureSprite.addImage(faceImg);
-  figureSprite.scale =(.8);
+  figureSprite.scale =(0.4);
 
 }
 
@@ -83,7 +90,7 @@ function drawBackground(){
 
 
 	shiftVar =  (second() * 10) % 255;
-	console.log(shiftVar)
+	//console.log(shiftVar)
 
 	opacity = 255;
 
@@ -168,6 +175,15 @@ function edgeCollision(){
 	    s.position.y = height-1;
 	    s.velocity.y = -abs(s.velocity.y);
     } 
+  }
+
+//keep figure sprite on the bottom
+  if (figureSprite.position.y < (0.7 * displayHeight)){
+  	figureSprite.position.y = 0.7 * displayHeight;
+  	console.log("sup");
+  } else {
+  	console.log("hey");
+
   }
 
 }
