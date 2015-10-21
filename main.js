@@ -1,6 +1,8 @@
 
 var energyDrinkImg;
 var energyDrink;
+var liquid;
+var liquidImg;
 var canGroup;
 
 var compImg, compSprite;
@@ -16,6 +18,8 @@ var c1, c2, shiftVar;
 
 var alpha;
 
+var basicAnim;
+
 function preload(){
 	energyDrinkImg = loadImage('assets/energyDrink1.png');
 	compImg = loadImage('assets/laptop.png');
@@ -25,6 +29,11 @@ function preload(){
 	faceImg = loadImage('assets/figureTired3.png');
 	faceImg = loadImage('assets/figureTired4.png');
 	faceImg = loadImage('assets/figureTired5.png');
+  liquidImg = loadImage('assets/tempLiquid.png');
+
+
+  basicAnim = loadAnimation("assets/figureTired3.png",  "assets/figureTired4.png",  "assets/figureTired5.png");
+  
 }
 
 function setup() {
@@ -34,16 +43,22 @@ function setup() {
 
   canGroup = new Group();
 
-  energyDrink = createSprite(0, 10);
+  energyDrink = createSprite(0, -30);
   energyDrink.addImage(energyDrinkImg);
-  energyDrink.scale =(0.3);
+  energyDrink.scale =(0.1);
+  energyDrink.rotation = 145;
+  liquid = createSprite(0, 500);
+  liquid.addImage(liquidImg);
+  liquid.scale = 10;
+  //liquid.setCollider("liquid");
 
+  canGroup.add(liquid);
   canGroup.add(energyDrink);
 
   //windSprite = createSprite(displayWidth * 0.5, displayHeight * 0.25, displayWidth * 0.5, displayHeight * 0.75);
 
 
-  energyDrink.setCollider("energyDrink");
+  //energyDrink.setCollider("energyDrink");
   energyDrink.attractionPoint(.9, mouseX, mouseY);
 
   compSprite = createSprite(displayWidth/2, displayHeight * 0.7);
@@ -53,9 +68,11 @@ function setup() {
 
 
   figureSprite = createSprite(mouseX, mouseY);
-  var figureAnimation = figureSprite.addAnimation("basic", "assets/figureTired3.png",  "assets/figureTired4.png",  "assets/figureTired5.png");
+  basicAnim.frameDelay = 1;
+  figureSprite.addAnimation('basic', basicAnim);
   figureSprite.addImage(faceImg);
-  figureSprite.scale =(0.4);
+  figureSprite.scale =(0.25);
+  figureSprite.setCollider("player");
 
 }
 
@@ -71,13 +88,15 @@ function draw() {
   //the positions will be updated automatically at every cycle
   drawBackground();
   drawSprites();
+  canMovement();
+  playerControl();
 } 
 
 
 
 
 function drawBackground(){
-  	background(255,127,80);   
+  background(255,127,80);   
 	strokeWeight(30);
 	stroke(0);
 	fill(255);
@@ -97,8 +116,8 @@ function drawBackground(){
   	c1 = color(80,80, shiftVar, opacity);
   	c2 = color(255-shiftVar, 102, 153, opacity);
 
-  	setGradient(0.25 * displayWidth, 	-100, 
-				0.5 * displayWidth,		0.65 * displayHeight, 	c1, c2, Y_AXIS);
+  	 setGradient(0.25 * displayWidth, 	-100, 
+			 	0.5 * displayWidth,		0.65 * displayHeight, 	c1, c2, Y_AXIS);
 
 
 	noFill();
@@ -180,10 +199,30 @@ function edgeCollision(){
 //keep figure sprite on the bottom
   if (figureSprite.position.y < (0.7 * displayHeight)){
   	figureSprite.position.y = 0.7 * displayHeight;
-  	console.log("sup");
+  	//console.log("sup");
   } else {
-  	console.log("hey");
+  	//console.log("hey");
 
+  }
+
+}
+
+function playerControl(){
+  //slow down the player by default -- they speed up by moving the mouse
+  figureSprite.velocity.x *= 0.9;
+
+}
+
+function canMovement(){
+  var canSpeed = 10 * random(-2, 2);
+
+  for (var i = 0; i < canGroup.length; i++){
+   canGroup[i].position.x += canSpeed;
+  }
+  //energyDrink.position.x+= canSpeed;
+
+  if (liquid.overlap(figureSprite)){
+    console.log("liquid player contact");
   }
 
 }
@@ -206,7 +245,10 @@ function mousePressed() {
 }
 
 function mouseMoved() {
-	figureSprite.attractionPoint(0.4, mouseX, displayHeight * 0.75);
+  //var cursorSpd = (-1 * (pmouseX - mouseX)/20) - 5;
+  //console.log("cursorSpd = " + cursorSpd + "  speed = " + figureSprite.velocity.x);
 
-  drawForeground();
+	figureSprite.attractionPoint(3, mouseX, displayHeight * 0.75);
+
+  //drawForeground();
 }
