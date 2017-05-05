@@ -17,7 +17,7 @@ var X_AXIS = 2;
 
 var c1, c2, shiftVar;
 
-var alpha;
+var alphaa;
 
 var basicAnim;
 
@@ -43,7 +43,7 @@ function preload(){
   liquidImg = loadImage('assets/tempLiquid.png');
 
 
-  basicAnim = loadAnimation("assets/figureTired3.png",  "assets/figureTired4.png",  "assets/figureTired5.png");
+  basicAnim = loadAnimation("assets/figureTired.png","assets/figureTired2.png","assets/figureTired3.png",  "assets/figureTired4.png",  "assets/figureTired5.png");
   
 	gulpSound = loadSound('assets/gulp.wav');
 	screamSound = loadSound('assets/scream.mp3');
@@ -53,7 +53,7 @@ function preload(){
 function setup() {
   createCanvas(displayWidth, displayHeight);  
   stroke(255);    
-  frameRate(60);
+  frameRate(120);
   system = new ParticleSystem(createVector(mouseX, height/5));
 
   canGroup = new Group();
@@ -79,7 +79,8 @@ function setup() {
 
   //energyDrink.setCollider("energyDrink");
   energyDrink.attractionPoint(.9, mouseX, mouseY);
-  energyDrink.setCollider("energyDrink");
+  //energyDrink.setCollider("energyDrink"); //old version of p5 play?
+  energyDrink.setCollider("rectangle", 0, 0, energyDrink.width, energyDrink.height);
   //energyDrink.attractionPoint(.9, mouseX, mouseY);
   energyDrink.rotation = 135;
 
@@ -95,7 +96,8 @@ function setup() {
   figureSprite.addImage(faceImg);
 
   //figureSprite.scale =(0.25);
-  figureSprite.setCollider("player");
+ // figureSprite.setCollider("player");
+ figureSprite.setCollider("circle", 0, 0, figureSprite.width);
   figureSprite.scale =(0.3);
   figureSprite.maxSpeed = 1;
 
@@ -103,7 +105,7 @@ function setup() {
 
 function draw() { 
   //smooth(4);
-  //console.log("Framerate: " + frameCount / millis() * 1000);
+  //console.log("player velocity.x = " + figureSprite.velocity.x);
   background(255,127,80);   
   //background(0, 255, 0, 50);
   
@@ -138,8 +140,6 @@ function draw() {
   system.addParticle(mousePos);
   system.run();
 } 
-
-
 
 
 function drawBackground(){
@@ -223,10 +223,10 @@ function setGradient(x, y, w, h, color1, color2, axis) {
       var inter = map(i, y, y+h, 0, 1);
       var c = lerpColor(color1, color2, inter);
       stroke(c);
-      //console.log(alpha(c));
+      //console.log(alphaa(c));
       line(x, i, x+w, i);
 
-/*
+  /*
     //  var mapI = map(i, y, y+h, )
     blendMode(LIGHTEST);
       stroke(red(c), green(c), blue(c), 10);
@@ -287,6 +287,7 @@ function playerControl(){
   //slow down the player by default -- they speed up by moving the mouse
   figureSprite.velocity.x *= 0.9;
 
+
 }
 
 function canMovement(){
@@ -300,11 +301,11 @@ function canMovement(){
   */
   energyDrink.position = createVector(mouseX, 0);
   //energyDrink.position.x+= canSpeed;
-/*
-  if (liquid.overlap(figureSprite)){
-    console.log("liquid player contact");
-  }
-*/
+  /*
+    if (liquid.overlap(figureSprite)){
+      console.log("liquid player contact");
+    }
+  */
 }
 
 function finishedDrink() {
@@ -315,7 +316,8 @@ function finishedDrink() {
 
 
   dumbSprite[count] = createSprite(random(0,width),random(0,height));
-  dumbSprite[count].setCollider("dumbSprite[count]");
+  //dumbSprite[count].setCollider("dumbSprite[count]");
+  dumbSprite[count].setCollider("rectangle", 0, 0, dumbSprite[count].width, dumbSprite[count].height);
   dumbSprite[count].setSpeed(random(2,3), random(0, 36000));
   dumbSprite[count].addImage(energyDrinkImg);
   dumbSprite[count].mass = 500;
@@ -328,8 +330,25 @@ function finishedDrink() {
 }
 
 function mouseMoved() {
-	figureSprite.attractionPoint(3, mouseX, height * 0.75);
+  if (abs(figureSprite.velocity.x) > 5){
+
+    if(mouseX < displayWidth/2){
+
+      //console.log("setting attraction point to right");
+      figureSprite.attractionPoint(300, displayWidth, 0.7 * displayHeight);
+    } else {
+      //console.log("setting attraction point to left");
+
+      figureSprite.attractionPoint(300, 0, 0.7 * displayHeight);
+    }
+  } else {
+  	figureSprite.attractionPoint(3, mouseX, height * 0.75);
+  }
 	//drawForeground();
+
+    if (figureSprite.animation.frameDelay < 5){
+     figureSprite.animation.frameDelay += 1;
+     }
 }
 
 
@@ -361,8 +380,15 @@ Particle.prototype.update = function(){
   	//console.log(figureSprite.position);
   if (threshold > dist(this.position.x, this.position.y, figureSprite.position.x, figureSprite.position.y )){
   	drinkPoints++;
+    if (figureSprite.animation.frameDelay > 2){ //basicAnim.frameDelay>2){
+          figureSprite.animation.frameDelay -= 1;
+        }
+    
+    console.log("basicanim delay= " + figureSprite.animation.frameDelay);
+
+  //figureSprite.addAnimation('basic', basicAnim);
   	//if (!gulpSound.isPlaying()){
-  		screamSound.stop();
+  		//screamSound.stop();
   		//gulpSound.playMode('restart');
   		gulpSound.play();
   	//}
@@ -370,13 +396,14 @@ Particle.prototype.update = function(){
   	this.lifespan = -1;
   	figureSprite.maxSpeed+= 0.1;
   } else {
-
   	screamSound.playMode('restart');
   	if (!screamSound.isPlaying()){
-  		screamSound.play();
+  		//screamSound.play();
   	}
 
   }
+
+
 };
 
 // Method to display

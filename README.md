@@ -1,4 +1,4 @@
-# energyDrinkGame
+# energyDrinkGame (crunch time?)
 as of yet unnamed energy drink game (absurd)
 
 ## thoughts
@@ -8,3 +8,5 @@ as of yet unnamed energy drink game (absurd)
  -mouse could move in perfect unison on the table, indicating computer world is like megacool compared to things irl
  -sun/moon cycle on an elliptical journey across the window
  
+
+ -balance heart exploding with falling asleep
